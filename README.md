@@ -1,13 +1,14 @@
 Tashwax
 ========
-Helper module for using Mustache templates
+Helper module for using Mustache templates. Designed to work with require.js.
 
 Example use:
 
 `tash.loadAndRender('./templates/template.html', data, $('#test'));`
 
 This will load a template from /templates/template.html, and render this to html 
-using the data object, inserting the result in the element #test;
+using the data object, inserting the result in the element #test. When a template
+is loaded, it will be stashed in memory (to avoid having to make another request)
 
 Example use:
 
