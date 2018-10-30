@@ -1,9 +1,18 @@
+/**
+ * Little helper for loading (and rendering) mustache templates. Desgined to work
+ * with jquery and requirejs 
+ * by Luke (medialight.com.au)
+ * 
+ * @param {type} $
+ * @param {type} Mustache
+ * @returns {tashwaxL#4.tashwax}
+ */
 define(['jquery', 'mustache'], function ($, Mustache) {
 
     var tashwax = {
         urlBase: '', // base url for templates 
         loadQueue: [], // templates to load
-        loader: '<span class="spinner">Loading</span>',
+        loader: '<div class="spinner"></div>',
         templateCache: {}, // cache of loaded templates 
         setUrlBase: function (url) {
             this.urlBase = url;
@@ -36,24 +45,44 @@ define(['jquery', 'mustache'], function ($, Mustache) {
                     // waiting for the template
                     setTimeout(function () {
                         me.loadTemplate(src, callback);
-                    }, 2000);
+                    }, 200);
                 }
             }
             return this;
         },
         /**
-         * Load a template and render the result into an element
+         * Load a template and render the result into an element or make a callback
          * 
          * @param {type} src
          * @param {type} data
-         * @param {type} $target
+         * @param {type} $target is either a jQuery object or a callback function
          * @returns {undefined}
          */
-        loadAndRender: function (src, data, $target) {
-            $target.html(this.loader);
+        loadAndRender: function (src, data, target) {
+            if (target instanceof jQuery) {
+                // target is a jquery wrapped element (hopefully!)
+                target.html(this.loader);
+            }
             this.loadTemplate(src, function (tpl) {
-                $target.html(Mustache.render(tpl, data));
+                if (target instanceof jQuery) {
+                    target.html(Mustache.render(tpl, data));
+                } else {
+                    // assume its a callback function ?
+                    if (target && {}.toString.call(target) === '[object Function]')
+                    {
+                        target(Mustache.render(tpl, data));
+                    }
+                }
             });
+        },
+        /**
+         * Render 'in memory' template 
+         * @param {type} tpl
+         * @param {type} data
+         * @returns {unresolved}
+         */
+        render: function (tpl, data) {
+            return Mustache.render(tpl, data);
         },
         /**
          * Chekc if the template (src) is in the queue
