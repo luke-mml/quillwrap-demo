@@ -32,9 +32,11 @@ define(['jquery', 'mustache'], function ($, Mustache) {
             if (this.templateCache[src]) {
                 callback(this.templateCache[src], src);
             } else {
-                // otherwise load if 
+                // otherwise load (if not alreayd in the load queue)
                 var me = this;
+                debugger;
                 if (!this.inLoadQueue(src)) {
+                    // add to queue and load it
                     this.loadQueue.push({src: src, callback: callback});
                     var url = this.urlBase + src;
                     $.get(url, {src: src}, function (template, textStatus, jqXhr) {
@@ -42,10 +44,8 @@ define(['jquery', 'mustache'], function ($, Mustache) {
                         me.callQueue(src, template);
                     });
                 } else {
-                    // waiting for the template
-                    setTimeout(function () {
-                        me.loadTemplate(src, callback);
-                    }, 200);
+                    // add to queue (so we can make the callback when its loaded)
+                    this.loadQueue.push({src: src, callback: callback});
                 }
             }
             return this;
