@@ -1,24 +1,25 @@
 // just for the demo
 define(function (require) {
-    var tash = require('tashwax'), viewData;
+    var quillWrap = require('quillwrap.min');
 
 
     $(document).ready(function () {
+        quillWrap.autoinit();
 
-        // 1. The easiest? ... load template and render into an element
-        viewData = {foo: 'test1'};
-        tash.loadAndRender('./templates/template.html', viewData, $('#test'));
+        $('#showHiddenContent').click(function () {
+            quillWrap.flushAll();
+            var $hiddenTextArea = $('#test');
+            var q = $hiddenTextArea.data('editor');
+            var ht = $hiddenTextArea.val();
+            $('#testContent').html(ht);
 
-        // 2. Load a template, render it and make a callback with rendered HTML
-        viewData = {foo: 'test2'};
-        tash.loadAndRender('./templates/template.html', viewData, function (ht) {
-            $('#test2').html(ht);
+            var $hiddenTextArea = $('#test2');
+            var ht = $hiddenTextArea.val();
+            $('#test2Content').html(ht);
         });
 
-        // 3. Load a template, callback with the template when its ready
-        viewData = {foo: 'test3'};
-        tash.loadTemplate('./templates/template.html', function (tpl, src) {
-            $('#test3').html(tash.render(tpl, viewData));
+        $('#flushAll').click(function () {
+            quillWrap.flushAll();
         });
     });
 
